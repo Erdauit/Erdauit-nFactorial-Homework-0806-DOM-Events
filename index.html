@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="css/style.css">
+        <title>Music box</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"/>
+
+    </head>
+    <body>
+        <div class="background">
+            <video id="backgroundvideo" autoplay width="100%" height="100%" loop="loop" muted>
+                 <source src="assets/video/background.mp4"></source>
+            </video>
+
+            <div class = "container">
+                <div class="header">
+                    <button id="player" onclick="playVideo()">
+                        <i class="fa fa-solid fa-dove fa-3x"></i>
+                    </button>
+                    <div>
+                        <div class="playpause-track" id = "playpause-track" onclick="playPauseTrack()">
+                            <i class="fa fa-play-circle fa-3x"></i>
+                        </div>
+                        <audio src ="assets/audio/audio.mp3" id = "audio"> </audio>
+                        
+                    </div>
+                    </div>
+                <div class = "center">
+                    <div class="progress">
+                        <span class="start"></span>
+                        <div class="progress-bar">
+                          <div class="now"></div>
+                        </div>
+                        <span class="end"></span>
+                      </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+    <script>
+        const video=document.getElementById("backgroundvideo");
+        let btn=document.getElementById("player")
+        let track = document.getElementById("playpause-track");
+
+        const audio = document.getElementById('audio')
+        const start = document.querySelector('.start')
+        const end = document.querySelector('.end')
+        const progressBar = document.querySelector('.progress-bar')
+        const now = document.querySelector('.now')
+        var zvuk = new Audio("assets/audio/zvuk.mp3")
+
+        function playVideo(){
+            if(video.paused){
+                video.play()
+                btn.innerHTML= '<i class="fa fa-solid fa-dove fa-3x"></i>'
+                zvuk.play()
+            }
+            else{
+                video.pause()
+                btn.innerHTML='<i class="fa fa-solid fa-dove fa-3x" style = " color:white "></i>'
+                zvuk.play()
+            }
+        }
+        function playPauseTrack(){
+          if(audio.paused){
+            audio.play();
+            track.innerHTML = '<i class="fa fa-pause-circle fa-3x"></i>';
+            zvuk.play()
+          }else{
+            audio.pause();
+            track.innerHTML = '<i class="fa fa-play-circle fa-3x"></i>';
+            zvuk.play()
+          }
+        }
+
+        function conversion (value) {
+                    let minute = Math.floor(value / 60)
+                    minute = minute.toString().length === 1 ? ('0' + minute) : minute
+                    let second = Math.round(value % 60)
+                    second = second.toString().length === 1 ? ('0' + second) : second
+                    return `${minute}:${second}`
+                }
+
+                audio.onloadedmetadata = function () {
+                    end.innerHTML = conversion(audio.duration)
+                    start.innerHTML = conversion(audio.currentTime)
+                }
+
+                progressBar.addEventListener('click', function (event) {
+                    let coordStart = this.getBoundingClientRect().left
+                    let coordEnd = event.pageX
+                    let p = (coordEnd - coordStart) / this.offsetWidth
+                    now.style.width = p.toFixed(3) * 100 + '%'
+
+                    audio.currentTime = p * audio.duration
+                    audio.play()
+                })
+
+                setInterval(() => {
+                    start.innerHTML = conversion(audio.currentTime)
+                    now.style.width = audio.currentTime / audio.duration.toFixed(3) * 100 + '%'
+                }, 1000)
+                        
+
+    </script>
+</html>
